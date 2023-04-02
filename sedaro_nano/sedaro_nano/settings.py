@@ -9,7 +9,8 @@ https://docs.djangoproject.com/en/4.1/topics/settings/
 For the full list of settings and their values, see
 https://docs.djangoproject.com/en/4.1/ref/settings/
 """
-
+import os
+from dotenv import load_dotenv
 from pathlib import Path
 
 # Build paths inside the project like this: BASE_DIR / 'subdir'.
@@ -25,6 +26,9 @@ SECRET_KEY = 'django-insecure-27p)s)-6rh%dfr8*zfmj5vs2)w36iz3&wh3(o%(!8g6^raisq3
 # SECURITY WARNING: don't run with debug turned on in production!
 DEBUG = True
 
+# initialize environment variables
+load_dotenv()
+
 ALLOWED_HOSTS = []
 
 
@@ -37,6 +41,10 @@ INSTALLED_APPS = [
     'django.contrib.sessions',
     'django.contrib.messages',
     'django.contrib.staticfiles',
+
+    'rest_framework',
+    # Apps
+    'orbital_calculations.apps.OrbitalCalculationsConfig',
 ]
 
 MIDDLEWARE = [
@@ -47,6 +55,7 @@ MIDDLEWARE = [
     'django.contrib.auth.middleware.AuthenticationMiddleware',
     'django.contrib.messages.middleware.MessageMiddleware',
     'django.middleware.clickjacking.XFrameOptionsMiddleware',
+    'corsheaders.middleware.CorsMiddleware',
 ]
 
 ROOT_URLCONF = 'sedaro_nano.urls'
@@ -67,6 +76,8 @@ TEMPLATES = [
     },
 ]
 
+CORS_ORIGIN_ALLOW_ALL = True  # this is not recommended but security is not of a concern for this project.
+
 WSGI_APPLICATION = 'sedaro_nano.wsgi.application'
 
 
@@ -77,6 +88,14 @@ DATABASES = {
     'default': {
         'ENGINE': 'django.db.backends.sqlite3',
         'NAME': BASE_DIR / 'db.sqlite3',
+    },
+    'orbital': {
+        'ENGINE': 'timescale.db.backends.postgresql',
+        'NAME': os.environ.get("ORBITAL_SERVICE_NAME"),
+        'USER': os.environ.get("ORBITAL_DATABASE_USER"),
+        "PASSWORD": os.environ.get("ORBITAL_DATABASE_PASS"),
+        "HOST": os.environ.get("ORBITAL_DATABASE_HOST"),
+        "PORT": os.environ.get("ORBITAL_DATABASE_PORT")
     }
 }
 
